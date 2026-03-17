@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlmodel import Session, select
+from datetime import datetime
 
 from app.core.config import settings
 from app.core.auth import oauth
@@ -113,7 +114,7 @@ def refresh(
         )
     
     stored=session.exec(
-         select(RefreshToken).where (RefreshToken.hash==hash(raw_refresh_token))
+         select(RefreshToken).where (RefreshToken.token_hash==hash_token(raw_refresh_token))
         ).first()
     if not stored:
             raise HTTPException(
@@ -125,7 +126,7 @@ def refresh(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token revoked",
         )
-    if stored.expires_at <= __import__("datetime").datetime.now(__import__("datetime").timezone.utc):
+    if stored.expires_at <= datetime.utcnow():
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token expired",

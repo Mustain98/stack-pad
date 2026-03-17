@@ -1,7 +1,8 @@
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
 from typing import Optional
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field,Relationship
+from app.models.group_member import GroupMember
 
 
 def utc_now() -> datetime:
@@ -17,6 +18,7 @@ class User(SQLModel, table=True):
     email: str = Field(index=True, unique=True)
     avatar_url: Optional[str] = Field(default=None)
     is_active: bool = Field(default=True)
+    projects: list["Project"]=Relationship(back_populates="members",link_model=GroupMember)
 
 
 class RefreshToken(SQLModel, table=True):
