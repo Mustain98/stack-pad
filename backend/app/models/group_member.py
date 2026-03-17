@@ -25,3 +25,8 @@ class GroupMember(SQLModel, table=True):
     role: Role = Field(default=Role.viewer)
     added: datetime = Field(default_factory=utc_now)
     updated: datetime = Field(default_factory=utc_now)
+
+class AddProjectMember(SQLModel):
+    project_id: UUID
+    member_id: UUID
+    role: Role = Role.viewer

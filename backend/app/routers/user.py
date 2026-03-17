@@ -5,10 +5,12 @@ from app.db.database import get_session
 from app.services.user import get_current_user
 from app.models.user import User
 from app.models.project import Project,CreateProject
+from app.models.group_member import GroupMember,AddProjectMember
 from app.schemas.user import UserRead
 from app.controllers.user import(
     get_all_projects_for_user,
-    create_project_for_user
+    create_project_for_user,
+    add_member_to_project_controller,
 )
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -29,3 +31,11 @@ def create_new_project(
     current_user: User = Depends(get_current_user),
 ) -> Project:
     return create_project_for_user(project_data, session, current_user)
+
+@router.post("/me/projects/add", response_model=AddProjectMember)
+def add_member_to_project(
+    data: AddProjectMember,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+) -> GroupMember:
+    return add_member_to_project_controller(data, session, current_user)
