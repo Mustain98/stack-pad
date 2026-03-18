@@ -6,7 +6,6 @@ from sqlmodel import SQLModel, Field, Relationship
 
 from app.models.group_member import GroupMember
 
-
 def utc_now() -> datetime:
     return datetime.now(timezone.utc)
 
@@ -29,8 +28,3 @@ class Project(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=utc_now)
 
 
-class CreateProject(SQLModel):
-    title: str
-    description: Optional[str] = None
-    github_link: Optional[str] = None
-    deployed_link: Optional[str] = None

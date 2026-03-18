@@ -1,24 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from sqlmodel import Session, select
-from app.db.database import get_session
-from app.services.user import get_current_user
 from app.models.user import User
-from app.models.project import Project,CreateProject
+from app.models.project import Project
 from app.models.group_member import GroupMember,Role,AddProjectMember
-from app.schemas.user import UserRead
+from app.schemas.project import CreateProject
 
 def get_all_projects_for_user(
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User,
 ) -> list[Project]:
-    if not current_user.projects:
-        raise HTTPException(
-            status_code=404,
-            detail="not found"
-        )
-    return current_user.projects
+    projects = current_user.projects
 
+    if not projects:
+        raise HTTPException(status_code=404, detail="not found")
+
+    return projects
 
 def create_project_for_user(
     project_data: CreateProject,
@@ -104,3 +100,5 @@ def add_member_to_project_controller(
     session.refresh(group_membership)
 
     return group_membership
+
+
